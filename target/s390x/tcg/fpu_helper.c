@@ -287,6 +287,26 @@ Int128 HELPER(dxb)(CPUS390XState *env, Int128 a, Int128 b)
     return RET128(ret);
 }
 
+/* 64-bit Divison to integer quotient */
+Int128 HELPER(didb)(CPUS390XState *env, uint64_t f1, uint64_t f2, uint32_t m4)
+{
+    printf("f1 = 0x%lx f2 = 0x%lx m4 = 0x%d \n", f1, f2, m4);
+
+    float64 quot = float64_div(f1, f2, &env->fpu_status);
+
+    // TODO ensure the rounding mode only applies to this rounding on real hardware
+    int old_mode = s390_swap_bfp_rounding_mode(env, m4);
+    float64 n = float64_round_to_int(quot, &env->fpu_status);
+    s390_restore_bfp_rounding_mode(env, old_mode);
+
+    float64 rem = float64_sub(f1, float64_mul(f2, n, &env->fpu_status), &env->fpu_status);
+
+    printf("remainder is 0x%lx and integer quotient = 0x%lx, real quotient was 0x%lx\n",rem, n, quot);
+
+    handle_exceptions(env, false, GETPC());
+    return int128_make128(rem, n);
+}
+
 /* 32-bit FP multiplication */
 uint64_t HELPER(meeb)(CPUS390XState *env, uint64_t f1, uint64_t f2)
 {

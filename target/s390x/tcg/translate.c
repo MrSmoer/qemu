@@ -2288,6 +2288,17 @@ static DisasJumpType op_dxb(DisasContext *s, DisasOps *o)
     return DISAS_NEXT;
 }
 
+static DisasJumpType op_didb(DisasContext *s, DisasOps *o)
+{
+    TCGv_i128 t = tcg_temp_new_i128();
+    // TODO needs the checks from there and why is true false this way?
+    // TCGv_i32 m4 = fpinst_extract_m34(s, false, true);
+    TCGv_i32 m4 = tcg_constant_i32(get_field(s, m4));
+    gen_helper_didb(t, tcg_env, o->in1, o->in2, m4);
+    tcg_gen_extr_i128_i64(o->out, o->out2, t);
+    return DISAS_NEXT;
+}
+
 static DisasJumpType op_ear(DisasContext *s, DisasOps *o)
 {
     int r2 = get_field(s, r2);
@@ -5241,6 +5252,13 @@ static void wout_f1(DisasContext *s, DisasOps *o)
     store_freg(get_field(s, r1), o->out);
 }
 #define SPEC_wout_f1 0
+
+static void wout_f1_f3(DisasContext *s, DisasOps *o)
+{
+    store_freg(get_field(s, r1), o->out);
+    store_freg(get_field(s, r3), o->out2);
+}
+#define SPEC_wout_f1_f3 0
 
 static void wout_x1(DisasContext *s, DisasOps *o)
 {

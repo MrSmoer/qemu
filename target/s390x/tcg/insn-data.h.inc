@@ -351,6 +351,7 @@
     F(0xb34d, DXBR,    RRE,   Z,   x1, x2, new_x, x1, dxb, 0, IF_BFP)
     F(0xed0d, DEB,     RXE,   Z,   e1, m2_32u, new, e1, deb, 0, IF_BFP)
     F(0xed1d, DDB,     RXE,   Z,   f1, m2_64, new, f1, ddb, 0, IF_BFP)
+    F(0xb35b, DIDBR,   RRF_h, Z,   f1, f2, new_P, f1_f3, didb, 0, IF_BFP)
 /* DIVIDE LOGICAL */
     C(0xb997, DLR,     RRE,   Z,   r1_D32, r2_32u, new_P, r1_P32, divu32, 0)
     C(0xe397, DL,      RXY_a, Z,   r1_D32, m2_32u, new_P, r1_P32, divu32, 0)
